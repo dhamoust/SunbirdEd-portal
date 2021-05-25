@@ -39,3 +39,7 @@ export interface ICard {
     };
   completionPercentage?: number;
 }
+export interface IContentRibbon {
+    contentType: string,
+    contents: [ICard]
+}

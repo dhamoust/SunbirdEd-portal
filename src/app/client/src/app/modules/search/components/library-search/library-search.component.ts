@@ -1,6 +1,6 @@
 import {
     PaginationService, ResourceService, ConfigService, ToasterService, INoResultMessage,
-    ICard, ILoaderMessage, UtilService, NavigationHelperService, IPagination, LayoutService, COLUMN_TYPE
+    ICard, ILoaderMessage, UtilService, NavigationHelperService, IPagination, LayoutService, COLUMN_TYPE, IContentRibbon
 } from '@sunbird/shared';
 import { SearchService, PlayerService, UserService, FrameworkService, OrgDetailsService, CoursesService } from '@sunbird/core';
 import { combineLatest, Subject, of } from 'rxjs';
@@ -52,6 +52,9 @@ export class LibrarySearchComponent implements OnInit, OnDestroy, AfterViewInit 
     public searchAll;
     public allMimeType;
     showBatchInfo: boolean;
+    resultData: Array<IContentRibbon> = [];
+    maxCardCount = 5;
+    viewAllEnabled = []
     selectedCourseBatches: { onGoingBatchCount: any; expiredBatchCount: any; openBatch: any; inviteOnlyBatch: any; courseId: any; };
     constructor(public searchService: SearchService, public router: Router, private playerService: PlayerService,
         public activatedRoute: ActivatedRoute, public paginationService: PaginationService,
@@ -226,6 +229,20 @@ export class LibrarySearchComponent implements OnInit, OnDestroy, AfterViewInit 
                 this.paginationDetails = this.paginationService.getPager(data.result.count, this.paginationDetails.currentPage,
                     this.configService.appConfig.SEARCH.PAGE_LIMIT);
                 this.contentList = _.get(data, 'result.content') ? this.getOrderedData(_.get(data, 'result.content')) : [];
+                const newContentList = this.contentList.map((data1) => ({ contentType: data1.contentType, contents: [data1] }));
+                let result = [];
+                newContentList.forEach((elem, i) => {
+                    let match = result.find(r => r.contentType === elem.contentType);
+                    if (match && result) {
+                        result.forEach(data => {
+                            if (data && (data.contentType === elem.contentType)) {
+                                data.contents.push(...elem.contents)
+                            }
+                        })
+                    } else {
+                        result.push(elem);
+                    }})
+                    this.resultData = result
                 this.totalCount = data.result.count;
             }, err => {
                 this.showLoader = false;
@@ -355,4 +372,17 @@ export class LibrarySearchComponent implements OnInit, OnDestroy, AfterViewInit 
         });
         return rootOrgIds;
       }
+      viewAll(content){
+          console.log("this.viewAllEnabled", this.viewAllEnabled)
+          if(content.contentType){
+              this.viewAllEnabled.push(content.contentType)
+          }
+      }
+      getMaxCardCount(contentData){
+          if(contentData && this.viewAllEnabled.length && this.viewAllEnabled.includes(contentData.contentType)){
+              return contentData.length
+          }
+          return this.maxCardCount
+      }
+
 }

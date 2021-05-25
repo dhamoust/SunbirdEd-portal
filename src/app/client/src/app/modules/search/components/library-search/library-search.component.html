@@ -31,12 +31,16 @@
               *ngIf="!showLoader && contentList.length" class="sb-grid">
               <div in-view-item [id]="i" [data]="content" class="sb-grid--item"
                 *ngFor="let content of contentList;let i = index;">
-                <sb-library-card [indexToDisplay]="i" [layoutConfig]="layoutConfiguration" appTelemetryInteract
+                <!-- <sb-library-card [indexToDisplay]="i" [layoutConfig]="layoutConfiguration" appTelemetryInteract
                   [telemetryInteractEdata]="cardIntractEdata"
                   [telemetryInteractObject]="{id:content.identifier,type:content.contentType || 'Content',ver:'1.0'}"
                   (cardClick)="playContent($event)" [content]="content"
                   [cardImg]="content?.appIcon || './assets/images/book.png'">
-                </sb-library-card>
+                </sb-library-card> -->
+                <sb-library-cards-grid [layoutConfig]="layoutConfiguration" [title]="content.contentType"
+                  [contentList]="content.content | sortBy:'contentType':'asc'" (cardClick)="playContent($event)"
+                  (viewMoreClick)="viewAll(content)" [maxCardCount]="3">
+                </sb-library-cards-grid>
               </div>
             </div>
           </div>

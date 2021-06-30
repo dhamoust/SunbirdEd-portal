@@ -1,29 +1,20 @@
-import { filter, first, takeUntil } from 'rxjs/operators';
-import {
-  UserService,
-  PermissionService,
-  TenantService,
-  OrgDetailsService,
-  FormService,
-  ManagedUserService, ProgramsService, CoursesService, DeviceRegisterService
-} from './../../services';
-import { Component, OnInit, ChangeDetectorRef, Input, OnDestroy } from '@angular/core';
-import {
-  ConfigService,
-  ResourceService,
-  IUserProfile,
-  UtilService,
-  ToasterService,
-  IUserData, LayoutService,
-  NavigationHelperService
-} from '@sunbird/shared';
-import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
-import * as _ from 'lodash-es';
-import { IInteractEventObject, IInteractEventEdata, TelemetryService } from '@sunbird/telemetry';
-import { CacheService } from 'ng2-cache-service';
+import { ChangeDetectorRef, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { environment } from '@sunbird/environment';
-import { Subject, zip, forkJoin } from 'rxjs';
+import {
+  ConfigService, IUserData, IUserProfile, LayoutService,
+  NavigationHelperService, ResourceService, ToasterService, UtilService
+} from '@sunbird/shared';
+import { IInteractEventEdata, TelemetryService } from '@sunbird/telemetry';
+import * as _ from 'lodash-es';
+import { CacheService } from 'ng2-cache-service';
+import { forkJoin, Subject, zip } from 'rxjs';
+import { filter, first, takeUntil } from 'rxjs/operators';
 import { EXPLORE_GROUPS, MY_GROUPS } from '../../../public/module/group/components/routerLinks';
+import {
+  CoursesService, DeviceRegisterService, FormService,
+  ManagedUserService, OrgDetailsService, PermissionService, ProgramsService, TenantService, UserService
+} from './../../services';
 
 declare var jQuery: any;
 type reportsListVersionType = 'v1' | 'v2';
@@ -188,7 +179,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
     } else if (url.indexOf('play') >= 0) {
       this.hrefPath = '/resources' + url;
     } else {
-      this.hrefPath = '/resources';
+      this.hrefPath = '/search/Library/1?selectedTab=all';
     }
   }
   getTelemetryContext() {
@@ -625,7 +616,7 @@ export class MainHeaderComponent implements OnInit, OnDestroy {
       }
       this.deviceProfile = _.get(deviceProfile, 'result');
       this.showLocationPopup = true;
-    }, (err) => { 
+    }, (err) => {
       this.toasterService.error(_.get(this.resourceService, 'messages.emsg.m0005'));
     });
   }

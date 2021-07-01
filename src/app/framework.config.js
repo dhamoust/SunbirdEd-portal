@@ -17,8 +17,8 @@ module.exports = {
         },
         queryOptions: {
             consistency: consistency
-        },
-        localDataCenter: 'datacenter1'
+        }//,
+        //localDataCenter: 'datacenter1'
     },
     elasticsearch: {
         host: '127.0.0.1:9200', // need to change
